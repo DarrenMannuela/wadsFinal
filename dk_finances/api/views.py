@@ -20,7 +20,8 @@ class AccountView(generics.ListAPIView):
 
 
 class CreateAccountView(APIView):
-    serializer_class = CreateAccountSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -30,7 +31,7 @@ class CreateAccountView(APIView):
             needs_split = serializer.data.get('needs_split')
             wants_split = serializer.data.get('wants_split')
             savings_split = serializer.data.get('savings_split')
-            user_id = serializer.data.get('user_id')
+            user_id = Token.objects.get(key=request.auth.key).user_id
             user = User.objects.get(id=user_id)
             account = Account(nik=nik, dob=dob,
                               needs_split=needs_split, wants_split=wants_split, savings_split=savings_split, user_id=user)
@@ -125,10 +126,10 @@ class UpdateBalance(APIView):
 
             user_session = self.request.session.session_key
 
-            if Balance.objects.filter(user_id=user).user_id != user_session:
+            if Balance.objects.filter(user_id=user) == False:
                 return Response({'msg': "Invalid user."}, status=status.HTTP_403_FORBIDDEN)
 
-            user_balance = Balance.objects.filter(user_id=user)
+            user_balance = Balance.objects.get(user_id=user)
             user_budget_allocation = BudgetAllocation.objects.filter(user_id=user)[
                 0]
             if balance > user_balance.balance:
