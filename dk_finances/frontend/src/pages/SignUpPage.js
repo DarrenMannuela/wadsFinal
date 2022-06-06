@@ -1,124 +1,132 @@
-import React from 'react';
-import TextField from '@mui/material/TextField'; 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import classNames from "classnames";
+import React, { Component, useState } from 'react';
+import FormCredentials from '../components/FormCredentials'
+import FormUserSuccess from '../components/FormUserSuccess'
+import FormPersonalDetails from '../components/FormPersonalDetails'
+import FormBudgetSplits from '../components/FormBudgetSplits';
+import { Link } from "react-router-dom";
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { makeStyles } from '@mui/material';
-import { indigo } from '@mui/material/colors';
-import { Container } from '@mui/system';
-import { CssBaseline } from '@mui/material';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 
 function SignUpPage(props){
-    return(
-        <Container component='main' maxWidth='xs' sx={{display: "flex"}}>
-            <CssBaseline>
-                <Box component='form' noValidate sx={{mt:7}}>
-                    <Typography variant="h5" align="center" sx={{paddingBottom: 2}}>
-                        Sign-Up
-                    </Typography>
-                    <Grid xs={12} sm={6}>
-                        <Grid item xs={12} sm={6} sx={{paddingBottom: 2}}>
-                                <TextField
-                                name="nik"
-                                required
-                                fullWidth
-                                id="nik"
-                                label="NIK"
-                                
-                                />
-                        </Grid>
-                    </Grid>
-                    <Grid container>
-                        <Grid item xs={12} sm={6} sx={{paddingBottom: 2}}>
-                            <TextField
-                                name="first Name"
-                                required
-                                fullWidth
-                                id="first Name"
-                                label="FirstName"
-                                autoFocus
+    const [step, setStep] = useState(1);
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [nik, setNik] = useState(null);
+    const [dob, setDob] = useState(null);
+    const [needs_split, setNeeds] = useState(0);
+    const [wants_split, setWants] = useState(0);
+    const [savings_split, setSavings] = useState(0);
 
-                            />
+    const user = {username, password}
+    const account = {nik, dob, needs_split, wants_split, savings_split}
 
-                        </Grid>
-                        <Grid item xs={12} sm={6} sx={{paddingBottom: 2, paddingLeft: 2}}>
-                            <TextField
-                                name="lastName"
-                                required
-                                fullWidth
-                                id="lastName"
-                                label="LastName"
-                                autoFocus
+    const nextStep = () => {
+        setStep(step+1);
+    };
 
-                            />
-                        </Grid>
-                    </Grid>
-                    <Grid>
-                    <TextField
-                        id="date"
-                        label="Date-of-Birth"
-                        type="date"
-                        defaultValue="2000-01-01"
-                        sx={{ width: "50%", paddingBottom: 2}}
-                        InputLabelProps={{
-                        shrink: true,
-                        }}
-                    />
-                    </Grid>
-                    <Grid container>
-                        <Grid item xs={12} sm={6}>
-                                <TextField
-                                name="password"
-                                required
-                                fullWidth
-                                id="password"
-                                label="Password"
-                                type="password"
-                                
-                                />
-                        </Grid>
-                        <Grid item xs={12} sm={6} sx={{paddingBottom: 2, paddingLeft: 2}}>
-                                <TextField
-                                name="repassword"
-                                required
-                                fullWidth
-                                id="repassword"
-                                label="Re-Password"
-                                type="password"
-                                
-                                />
-                        </Grid>
-                    </Grid>
-                    <Grid>
-                        <Grid item xs={12} sx={{paddingTop: 2}}>
-                        <FormControlLabel
-                            control={<Checkbox value="allowExtraEmails" color="primary" />}
-                            label="Sign-Up"
-                            />
-                        </Grid>
-                    </Grid>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        display="flex"
-                        sx={{ mt: 3, mb: 2 }}
-                        >
-                        Sign-Up
-                    </Button>
-                </Box>
-            </CssBaseline>
-        </Container>
-        
-      
-    )
+    const prevStep = () => {
+        setStep(step-1);
+    };
+
+    const registerUser = (e) => {
+        fetch('http://127.0.0.1:8000/api/users/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(user)
+        }).then((data) => data.json())
+        .then((data) => {
+                console.log('User added')
+            }
+        )
+        .catch((error) => console.error(error))
+    }
+
+    const registerAccount = (e) => {
+        fetch('http://127.0.0.1:8000/api/create-account', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ${props.token}'
+            },
+            body: JSON.stringify(account)
+        }).then(() => {
+            console.log('Account info added');
+            console.log(props.token)
+        })
+        .catch((error) => console.error(error))
+    }
+
+    const login = (e) => {
+        fetch('http://127.0.0.1:8000/auth', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(user)
+        }).then((data) => data.json())
+        .then((data) => {
+            props.userLogin(data.token);
+            }
+        )
+        .catch((error) => console.error(error))
+    }
+
+    switch (step) {
+        case 1:
+            return(
+                <FormCredentials
+                    nextStep={nextStep}
+                    registerUser={registerUser}
+                    setUsername={setUsername}
+                    setPassword={setPassword}
+                    username={username}
+                    password={password}
+                />
+            );
+        case 2:
+            return(
+                <FormUserSuccess
+                    nextStep={nextStep}
+                    login={login}
+                />
+            );
+        case 3:
+            return(
+                <FormPersonalDetails
+                    nextStep={nextStep}
+                    setNik={setNik}
+                    setDob={setDob}
+                    nik={nik}
+                    dob={dob}
+                />
+            );
+        case 4:
+            return(
+                <FormBudgetSplits
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                    registerAccount={registerAccount}
+                    setNeeds={setNeeds}
+                    setWants={setWants}
+                    setSavings={setSavings}
+                    needs_split={needs_split}
+                    wants_split={wants_split}
+                    savings_split={savings_split}
+                />
+            );
+        case 5:
+            return(
+                <Container component='main' maxWidth='xs' sx={{mt: '3%', display: "flex"}}>
+                    <Stack spacing={10}>
+                        <Typography variant="h1" align="center" sx={{ fontSize:90, fontWeight: 600 }}>
+                                Success!
+                        </Typography>
+                        <Typography variant="h4" align="center" sx={{ fontSize:20 }}>
+                                Click <Link to={"/login"} >here</Link> to go back to the login page
+                        </Typography>
+                    </Stack>
+                </Container>
+            )
+    };
 }
-
 
 export default SignUpPage;

@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 
 function AddIncomePage(props){
     const [income, setIncome] = React.useState(0);
+    const [balance, setBalance] = React.useState(0);
 
     function handleIncome(event){
         setIncome(event.target.valueAsNumber);
@@ -18,14 +19,28 @@ function AddIncomePage(props){
 
     }
 
+    React.useEffect(()=>{fetch('api/balances')
+    .then(res=>{return res.json()})
+    .then(data =>{
+      data.map(cur =>{
+        if(cur.user_id == 11){
+            setBalance(cur.balance)
+        };
+      })
+    })
+    }, []);
+
+    console.info(balance)
+
     function updateIncome(){
-        fetch(`api/balances/1`,{
+        fetch(`api/update-balance`,{
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                balance: income,
+                user_id: 11,
+                balance: income+balance
               }),
             
         })
