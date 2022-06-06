@@ -29,8 +29,6 @@ function AddCategorySmartSplit(props){
     const [needWant, setNeedWant] = React.useState('');
     const [category, setCategory] = React.useState('');
     const [amount, setAmount] = React.useState(0);
-    const [sendData, setSendData] = React.useState({});
-    
 
     const handleNeedsWants = (event) =>{
        setNeedWant(event.target.value)
@@ -64,12 +62,29 @@ function AddCategorySmartSplit(props){
     };
 
     async function postAmount(){
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+        var yyyy = today.getFullYear();
 
-        const response = await(fetch(api/create-history),{
+        today = yyyy + '-' + mm + '-' + dd;
+
+        fetch(`api/create-history`,{
             method: 'POST',
-            body: JSON.stringify(sendData),
-            headers: {"Content-type": "application/json; charset=UTF-8"}
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                category: needWant,
+                subcategory: category,
+                price: amount,
+                date_bought: today,
+                user_id: 11
+            }),           
         })
+        .then((res) => {console.info(res.status);
+            res.json();})
+        .catch((err) => console.log('error: ', err))
 
     }
 
@@ -150,6 +165,7 @@ function AddCategorySmartSplit(props){
             </Box>
             <Button 
                     fullWidth
+                    id = "addAmount"
                     variant="contained"
                     sx={{ mt: 3, mb: 2}}
                     onClick={postAmount}

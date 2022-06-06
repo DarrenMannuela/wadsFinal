@@ -4,6 +4,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import SignUpPage from "../pages/SignUpPage";
 import SmartSplitPage from "../pages/SmartSplitPage"
+import AddIncomePage from "../pages/AddIncomePage";
 import {BrowserRouter as Router, Routes, Route, Link, Redirect} from "react-router-dom";
 
 
@@ -23,6 +24,7 @@ function App(props) {
                                 <Route path='/login' element={<LoginPage/>}></Route>
                                 <Route path='/signup' element={<SignUpPage userLogin={userLogin} token={token}/>}></Route>
                                 <Route path='/smartsplit' element={<SmartSplitPage/>}></Route>
+                                <Route path='/addincome' element={<AddIncomePage/>}></Route>
                         </Routes>
                         
                 </Router>
