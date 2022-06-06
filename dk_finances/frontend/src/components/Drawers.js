@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Link } from "react-router-dom"
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -14,11 +15,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import ClickAwayListener from '@mui/base/ClickAwayListener';
 
 
 const drawerWidth = 240;
@@ -71,6 +68,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function OpenDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const paths = {'Dashboard': '/', 'Smart Split': 'smartsplit', 'Tracker': '/tracker', 'Add Income': '/addincome'}
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -121,7 +119,7 @@ export default function OpenDrawer() {
         <List>
           {['Dashboard', 'Smart Split', 'Tracker', 'Add Income'].map((text, index) => (
             <ListItem key={text} disablePadding>
-              <ListItemButton>
+              <ListItemButton component={Link} to={paths[text]}>
                 <ListItemText primary={text} />
               </ListItemButton>
             </ListItem>

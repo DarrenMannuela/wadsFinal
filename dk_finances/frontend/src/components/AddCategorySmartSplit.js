@@ -83,7 +83,11 @@ function AddCategorySmartSplit(props){
             }),           
         })
         .then((res) => {console.info(res.status);
-            res.json();})
+            res.json();}).then(()=>{
+                setNeedWant('');
+                setCategory('');
+                setAmount(0);
+            })
         .catch((err) => console.log('error: ', err))
 
     }
@@ -94,12 +98,12 @@ function AddCategorySmartSplit(props){
         <Paper elevation={12} sx={{width: 350, height: 350 }}>
             <React.Fragment>
                 <ButtonGroup disableElevation variant="contained" sx={{ml: 3, mt: 5, width: 300, height: 40}}>
-                    <Button id='needs' name='needs' value="Needs" onClick={handleNeedsWants} sx={{width: "50%"}}>Needs</Button>
-                    <Button id='wants' name='wants' value="Wants" onClick={handleNeedsWants} sx={{width: "50%"}}>Wants</Button>
+                    <Button id='needs' name='needs' value="Needs" onClick={handleNeedsWants} onChange={needWant} sx={{width: "50%"}}>Needs</Button>
+                    <Button id='wants' name='wants' value="Wants" onClick={handleNeedsWants} onChange={needWant} sx={{width: "50%"}}>Wants</Button>
                 </ButtonGroup>
 
                 <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button" sx={{ml: 3, mt: 2, width: 300, height: 40}}>
-                    <Button onClick={handleCategory} value={options[selectedIndex]} sx={{width:"80%"}}>{options[selectedIndex]}</Button>
+                    <Button onClick={handleCategory} onChange={category} value={options[selectedIndex]} disabled={!needWant} sx={{width:"80%"}}>{options[selectedIndex]}</Button>
                     <Button
                     size="small"
                     aria-controls={open ? 'split-button-menu' : undefined}
@@ -107,6 +111,7 @@ function AddCategorySmartSplit(props){
                     aria-label="select merge strategy"
                     aria-haspopup="menu"
                     onClick={handleToggle}
+                    disabled={!needWant}
                     sx={{width:"20%"}}
                     >
                     <ArrowDropDownIcon />
@@ -159,12 +164,15 @@ function AddCategorySmartSplit(props){
                     label="Amount"
                     type="number"
                     variant="filled"
-                    onInput = {handleAmount}
+                    defaultValue={0}
+                    onChange = {handleAmount}
+                    disabled = {!category}
                     >
             </TextField>
             </Box>
             <Button 
                     fullWidth
+                    disabled={!amount}
                     id = "addAmount"
                     variant="contained"
                     sx={{ mt: 3, mb: 2}}

@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { Container } from '@mui/system';
 import { CssBaseline } from '@mui/material';
 import Button from '@mui/material/Button';
-
+import OpenDrawer from '../components/Drawers';
 
 function AddIncomePage(props){
     const [income, setIncome] = React.useState(0);
@@ -45,7 +45,9 @@ function AddIncomePage(props){
             
         })
         .then((res) => {console.info(res.status);
-            res.json();})
+            res.json();}).then(()=>{
+                setIncome(0);
+            })
         .catch((err) => console.log('error: ', err))
     }
 
@@ -53,7 +55,8 @@ function AddIncomePage(props){
         <Container component='main' maxWidth='xs' sx={{display: "flex"}}>
             <CssBaseline>
                 <Box component='form' noValidate sx={{mt:7}}>
-                    <Typography variant="h5" align="center" sx={{paddingBottom: 2}}>
+                    <OpenDrawer/>
+                    <Typography variant="h5" align="center" sx={{paddingBottom: 2, mt:10}}>
                         Add Income
                     </Typography>
                     <Grid xs={12} sm={6}>
@@ -65,7 +68,8 @@ function AddIncomePage(props){
                                 id="income"
                                 label="Income"
                                 type = "number"
-                                onInput={handleIncome}
+                                defaultValue={0}
+                                onChange={handleIncome}
                                 />
                         </Grid>
                     </Grid>
@@ -76,6 +80,7 @@ function AddIncomePage(props){
                         display="flex"
                         sx={{ mt: 3, mb: 2 }}
                         onClick={updateIncome}
+                        disabled={!income}
                         >
                         Add Income
                     </Button>
