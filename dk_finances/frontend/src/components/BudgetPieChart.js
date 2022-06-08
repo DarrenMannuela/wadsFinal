@@ -81,7 +81,7 @@ function BudgetPieChart(props){
         }       
       }
 
-      if(chartData != null){
+      if(chartData != null || props.updateData == true){
         updateChart(0, chartData);
       }
         
