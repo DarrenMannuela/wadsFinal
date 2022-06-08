@@ -37,46 +37,63 @@ function DailyList(props){
   const createRows = [];
   const [rows, setRows] = React.useState([]);
 
+  // React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
+  // .then(res=>{return res.json()})
+  // .then(data =>{
+  //     const today = new Date(); 
+  //     today.setHours(0, 0, 0, 0);
+  //     data.map(cur =>{
+  //         const date_bought = new Date(cur.date_bought);
+  //         date_bought.setHours(0, 0, 0, 0);
+  //         if(today.getTime() == date_bought.getTime()){
+  //           var sepPrice = cur.price.toLocaleString();
+  //           createRows.push(createData(cur.category, cur.subcategory, sepPrice));
+  //           setRows(createRows);
+  //         };
+  //   })
+  // })
+  // }, []);
+
+  
   React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
   .then(res=>{return res.json()})
-  .then(data =>{
-      const today = new Date(); 
-      today.setHours(0, 0, 0, 0);
-      data.map(cur =>{
-          const date_bought = new Date(cur.date_bought);
-          date_bought.setHours(0, 0, 0, 0);
-          if(today.getTime() == date_bought.getTime()){
-            var sepPrice = cur.price.toLocaleString();
-            createRows.push(createData(cur.category, cur.subcategory, sepPrice));
-            setRows(createRows);
-          };
-    })
-  })
+  .then(data =>{setRows(data)})
   }, []);
 
-  console.info(rows);
+  rows.map(cur=>{
+    const today = new Date();
+    const date_bought = new Date(cur.date_bought)
+    today.setHours(0, 0, 0, 0);
+    date_bought.setHours(0, 0, 0, 0);
+    if(today.getTime() == date_bought.getTime()){
+      var sepPrice = cur.price.toLocaleString();
+      createRows.push(createData(cur.category, cur.subcategory, sepPrice));
+    };
+  })
+
+  console.info(createRows);
 
     return(
       <TableContainer component={Paper} sx={{maxHeight: 200 }}>
-      <Table sx={{minWidth: 400}}>
-          <TableHead>
-              <TableRow>
-                   <StyledTableCell>Category</StyledTableCell>
-                   <StyledTableCell align="right">Sub-Category</StyledTableCell>
-                   <StyledTableCell align="right">Amount</StyledTableCell>
-              </TableRow>
-          </TableHead>
-          <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.category}>
-                  <StyledTableCell component='th' scope='row'>{row.category}</StyledTableCell>
-                  <StyledTableCell align="right">{row.subCategory}</StyledTableCell>
-                  <StyledTableCell align="right">{row.amount}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-          </TableBody>
-      </Table>
-  </TableContainer>
+           <Table stickyHeader sx={{minWidth: 350}}>
+               <TableHead>
+                   <TableRow>
+                        <StyledTableCell>Category</StyledTableCell>
+                        <StyledTableCell align="right">Sub-Category</StyledTableCell>
+                        <StyledTableCell align="right">Amount</StyledTableCell>
+                   </TableRow>
+               </TableHead>
+               <TableBody>
+                {createRows.map((row) => (
+                  <StyledTableRow key={row.category}>
+                    <StyledTableCell component='th' scope='row'>{row.category}</StyledTableCell>
+                    <StyledTableCell align="right">{row.subCategory}</StyledTableCell>
+                    <StyledTableCell align="right">{row.amount}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+               </TableBody>
+           </Table>
+       </TableContainer>
   );
     
 }
