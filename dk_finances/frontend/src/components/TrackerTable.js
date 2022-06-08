@@ -32,27 +32,26 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
-function TrackerTable(){
+function TrackerTable(props){
   const cleanedRow = [];
   const [rows, setRows] = React.useState([]);
 
-  React.useEffect(()=>{fetch('api/history')
+  React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
   .then(res=>{return res.json()})
   .then(data =>{setRows(data)})
   }, []);
 
   rows.map(cur=>{
-    if(cur.user_id == 11){
-      var sepPrice = cur.price.toLocaleString();
-      cleanedRow.push(createData(cur.category, cur.subcategory, sepPrice))
-    }
+    var sepPrice = cur.price.toLocaleString();
+    cleanedRow.push(createData(cur.category, cur.subcategory, sepPrice))
+    
   })
 
   
 
    return(
-       <TableContainer component={Paper} sx={{overflow: 'auto'}}>
-           <Table sx={{minWidth: 700}}>
+       <TableContainer component={Paper} sx={{overflow: 'hidden'}}>
+           <Table stickyHeader sx={{minWidth: 700,  maxHeight: 440 }}>
                <TableHead>
                    <TableRow>
                         <StyledTableCell>Category</StyledTableCell>

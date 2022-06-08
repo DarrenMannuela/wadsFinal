@@ -9,17 +9,16 @@ function BudgetPieChart(props){
     const [chartInstance, setChartInstance] = useState(null);
 
   
-    useEffect(()=>{fetch('api/history')
+    useEffect(()=>{fetch(`api/history?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
-        if(cur.user_id == props.user_id){
-          if(cur.category == 'Needs'){
-            needsWants['needs'] += cur.price;
-          }else{
-            needsWants['wants'] += cur.price;
-          }
-          setChartData(Object.values(needsWants))};
+        if(cur.category == 'Needs'){
+          needsWants['needs'] += cur.price;
+        }else{
+          needsWants['wants'] += cur.price;
+        }
+        setChartData(Object.values(needsWants));
       });
     })
     }, []);

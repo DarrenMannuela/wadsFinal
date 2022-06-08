@@ -33,7 +33,7 @@ function AddIncomePage(props){
     console.info(balance)
 
     function updateIncome(){
-        fetch(`api/update-balance`,{
+        fetch('api/update-balance',{
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -42,7 +42,6 @@ function AddIncomePage(props){
                 user_id: 11,
                 balance: income+balance
               }),
-            
         })
         .then((res) => {console.info(res.status);
             res.json();}).then(()=>{

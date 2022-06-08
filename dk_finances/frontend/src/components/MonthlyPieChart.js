@@ -16,11 +16,13 @@ function MonthlyPieChart(props){
     const chartContainer = useRef(null);
     const [chartInstance, setChartInstance] = useState(null);
   
-    useEffect(()=>{fetch('api/history')
+    useEffect(()=>{fetch(`api/history?${props.user_id}`,)
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
-        if(cur.user_id == props.user_id){
+        const monthNow = new Date().getMonth(); 
+        const monthData = new Date().getMonth()
+        if(monthData == monthNow){
           amountBasedOnCategory[cur.subcategory] += cur.price;
           setChartData(Object.values(amountBasedOnCategory))};
       })
@@ -77,9 +79,6 @@ function MonthlyPieChart(props){
               "rgba(230, 30, 120, 1)",
               "rgba(240, 120, 255, 1)",
               "rgba(42, 78, 7, 1)"
-
-
-
             ],
             borderWidth: 1
           }
@@ -116,7 +115,7 @@ function MonthlyPieChart(props){
     }
 
     return (
-        <div style={{position:'relative', height:'40vh', width: '80vh'}}>
+        <div style={{position:'relative', height:'30vh', width: '70vh'}}>
            <Typography variant="h6" gutterBottom component="div" >
                 Monthly Spending
             </Typography>

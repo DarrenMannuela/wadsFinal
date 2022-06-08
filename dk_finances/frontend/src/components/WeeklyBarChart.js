@@ -8,14 +8,27 @@ function WeeklyBarChart(props){
   const weekChart = {"Sunday": 0,"Monday": 0,"Tuesday": 0,"Wednesday": 0,"Thursday": 0,"Friday": 0,"Saturday": 0};
   const chartContainer = useRef(null);
   const [chartInstance, setChartInstance] = useState(null);
-
   const [chartData, setChartData] = useState(null);
-  useEffect(()=>{fetch('api/history')
+
+
+  useEffect(()=>{fetch(`api/history?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data =>{
+      const today = new Date();
+      const getDate = today.getDate();
+      const first = getDate - today.getDay();
+      const last = first + 7;
+
+      const firstDay = new Date(today.setDate(first));
+      const lastDay = new Date(today.setDate(last));
+
+      firstDay.setHours(0, 0, 0, 0);
+      lastDay.setHours(0, 0, 0, 0)
+
       data.map(cur =>{
-        if(cur.user_id == props.user_id){
-          const d = new Date(cur.date_bought);
+        const d = new Date(cur.date_bought);
+        d.setHours(0, 0, 0, 0);
+        if(firstDay.getTime()>=d.getTime()<lastDay.getTime()){
           weekChart[week[d.getDay()]] += cur.price;
           setChartData(Object.values(weekChart))}
       });

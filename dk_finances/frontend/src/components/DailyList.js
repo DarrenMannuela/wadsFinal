@@ -33,11 +33,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }));
 
 
-function DailyList(){
+function DailyList(props){
   const createRows = [];
   const [rows, setRows] = React.useState([]);
 
-  React.useEffect(()=>{fetch('api/history')
+  React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
   .then(res=>{return res.json()})
   .then(data =>{
       const today = new Date(); 
@@ -45,7 +45,7 @@ function DailyList(){
       data.map(cur =>{
           const date_bought = new Date(cur.date_bought);
           date_bought.setHours(0, 0, 0, 0);
-          if(cur.user_id == 11 && today.getTime() == date_bought.getTime()){
+          if(today.getTime() == date_bought.getTime()){
             var sepPrice = cur.price.toLocaleString();
             createRows.push(createData(cur.category, cur.subcategory, sepPrice));
             setRows(createRows);
