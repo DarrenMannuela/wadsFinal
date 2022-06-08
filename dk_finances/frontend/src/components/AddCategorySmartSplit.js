@@ -141,7 +141,7 @@ function AddCategorySmartSplit(props){
                                     placement === 'bottom' ? 'center top' : 'center bottom',
                                 }}
                             >
-                                <Paper sx={{overflow: 'auto', width: 300, height: 200}}>
+                                <Paper sx={{overflow: 'auto', width: 300, height: 100}}>
                                 <ClickAwayListener onClickAway={handleClose}>
                                     <MenuList id="split-button-menu" autoFocusItem>
                                     {options.map((option, index) => (
