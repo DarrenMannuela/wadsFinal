@@ -14,7 +14,7 @@ function TrackerPage(props){
             <OpenDrawer/>
             <Container component='main' maxWidth='xs' sx={{display: "flex"}}>
                 <Box component='form' noValidate sx={{mt:7}}>
-                    <Paper elevation={12} sx={{width: 800, height: 450, mt:3, mx:"30%"}}>
+                    <Paper elevation={12} sx={{width: 800, height: 200, mt:3, mx:"30%"}}>
                         <TrackerTable user_id={11}/>
                     </Paper>
                 </Box>

@@ -68,7 +68,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 export default function OpenDrawer() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const paths = {'Dashboard': '/', 'Smart Split': 'smartsplit', 'Tracker': '/tracker', 'Add Income': '/addincome'}
+  const paths = {'Dashboard': '/', 'Smart Split': '/smartsplit', 'Tracker': '/tracker', 'Add Income': '/addincome'}
 
   const handleDrawerOpen = () => {
     setOpen(true);

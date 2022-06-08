@@ -12,7 +12,6 @@ function SmartSplitPage(props){
         <body style={{display:'flex'}}>
             <OpenDrawer/>
             <AddCategorySmartSplit/>
-                
         </body>
      )
     

@@ -57,8 +57,8 @@ function DailyList(props){
   console.info(rows);
 
     return(
-      <TableContainer component={Paper} sx={{overflow: 'auto'}}>
-      <Table sx={{minWidth: 500, minHeight: 200}}>
+      <TableContainer component={Paper} sx={{maxHeight: 200 }}>
+      <Table sx={{minWidth: 400}}>
           <TableHead>
               <TableRow>
                    <StyledTableCell>Category</StyledTableCell>

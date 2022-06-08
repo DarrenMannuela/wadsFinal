@@ -50,8 +50,8 @@ function TrackerTable(props){
   
 
    return(
-       <TableContainer component={Paper} sx={{overflow: 'hidden'}}>
-           <Table stickyHeader sx={{minWidth: 700,  maxHeight: 440 }}>
+       <TableContainer component={Paper} sx={{maxHeight: 500 }}>
+           <Table stickyHeader sx={{minWidth: 700}}>
                <TableHead>
                    <TableRow>
                         <StyledTableCell>Category</StyledTableCell>
