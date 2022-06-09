@@ -10,7 +10,7 @@ function BudgetAmountDisplay(props){
                 {props.needWant}
             </Typography>
             <Typography variant="h6" noWrap gutterBottom component="div" sx={{width:"70%", ml: "1%", mt: "5%"}}>
-                {props.category}
+                {props.subCategory}
             </Typography>
         </Paper>
     )

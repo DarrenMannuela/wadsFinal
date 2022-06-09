@@ -16,55 +16,81 @@ import Grid from '@mui/material/Grid';
 import BudgetPieChart from './BudgetPieChart';
 
 
-
+// Sub-subCategory options
 const options = ["Food", "Transportation", "Travel", 
                             "Housing", "Utility bills", "Cellphone", 
                             "Groceries", "Clothing", "Healthcare",
                             "Childcare", "Pet Necessities", "Pet Insurance",
                             "Subscriptions", "Others"]
 
+            
+
+
+
+// Functional component of Adding a new expense                            
 function AddCategorySmartSplit(props){
 
+    //UseStates used within the component
+
+    //Used to handle the button click on the popper of the sub subCategory section and anchor it to a reference
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
+
+    //Used to set the current selected index of the sub-categories
     const [selectedIndex, setSelectedIndex] = React.useState(1);
+
+    //Holds the option of the category choosed
     const [needWant, setNeedWant] = React.useState('');
-    const [category, setCategory] = React.useState('');
+
+    //Holds the subcategory value
+    const [subCategory, setSubCategory] = React.useState('');
     const [amount, setAmount] = React.useState(0);
-    const [updateData, setUpdateData] = React.useState(false)
 
-    const handleNeedsWants = (event) =>{
-       setNeedWant(event.target.value)
-    };
+    //Handles the button click for the categories buttons
+    function handleNeedsWants(event){
+        setNeedWant(event.target.value)
+    }
 
-    const handleCategory = (event) => {
-        setCategory(event.target.value)
+    
+    //Handles the button click to set the value of subcategories
+    function handleSubCategory(event){
+        setSubCategory(event.target.value)
         console.info(`You clicked ${options[selectedIndex]}`);
-    };
+    }
 
-    const handleAmount = (event) =>{
+
+    //Handles the button click after entering a value in the textfield
+    function handleAmount(event){
         setAmount(event.target.valueAsNumber);
         console.info(amount);
-    };
+    }
 
-    const handleMenuItemClick = (event, index) => {
+
+    //Handles the the changing of subcategory choice
+    function handleMenuItemClick(event, index){
         setSelectedIndex(index);
         setOpen(false);
-    };
+    }
 
-    const handleToggle = () => {
+    
+    //Handles the opening of the popper to access the other sub categories
+    function handleToggle(){
         setOpen((prevOpen) => !prevOpen);
-    };
+    }
 
-    const handleClose = (event) => {
+
+    //Handles the closing of the poper 
+    function handleClose(event){
         if (anchorRef.current && anchorRef.current.contains(event.target)) {
-        return;
-        }
+            return;
+            } 
+            setOpen(false);
 
-        setOpen(false);
-    };
+    }
 
-    async function postAmount(){
+
+    //Giving a POST request to add to the history database
+    function postAmount(){
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); 
@@ -79,7 +105,7 @@ function AddCategorySmartSplit(props){
             },
             body: JSON.stringify({
                 category: needWant,
-                subcategory: category,
+                subcategory: subCategory,
                 price: amount,
                 date_bought: today,
                 user_id: 11
@@ -88,9 +114,8 @@ function AddCategorySmartSplit(props){
         .then((res) => {console.info(res.status);
             res.json();}).then(()=>{
                 setNeedWant('');
-                setCategory('');
+                setSubCategory('');
                 setAmount(0);
-                setUpdateData(true);
             })
         .catch((err) => console.log('error: ', err))
 
@@ -101,7 +126,7 @@ function AddCategorySmartSplit(props){
     <Box component='form' rowSpacing={2} sx={{display:'flex'}}>
         <Grid container direction="row" sx={{mt:'15%'}}>
             <Grid item xs={8}>
-                <BudgetPieChart user_id = {11} updateData={updateData}/>
+                <BudgetPieChart user_id = {11}/>
             </Grid>
             <Grid item xs={4}>
                 <Paper elevation={12} sx={{width: 350, height: 350 }}>
@@ -112,7 +137,7 @@ function AddCategorySmartSplit(props){
                         </ButtonGroup>
 
                         <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button" sx={{ml: 3, mt: 2, width: 300, height: 40}}>
-                            <Button onClick={handleCategory} onChange={category} value={options[selectedIndex]} disabled={!needWant} sx={{width:"80%"}}>{options[selectedIndex]}</Button>
+                            <Button onClick={handleSubCategory} onChange={subCategory} value={options[selectedIndex]} disabled={!needWant} sx={{width:"80%"}}>{options[selectedIndex]}</Button>
                             <Button
                             size="small"
                             aria-controls={open ? 'split-button-menu' : undefined}
@@ -162,7 +187,7 @@ function AddCategorySmartSplit(props){
                     </React.Fragment>
                     <Divider variant="middle" sx={{mt: 2, borderBottomWidth: 5}}/>
 
-                    <BudgetAmountDisplay needWant = {needWant} category={category}/>
+                    <BudgetAmountDisplay needWant = {needWant} subCategory={subCategory}/>
                     <Box  sx={{px: 3, mt: 2}}>
                     <TextField
                             required
@@ -175,7 +200,7 @@ function AddCategorySmartSplit(props){
                             variant="filled"
                             defaultValue={0}
                             onChange = {handleAmount}
-                            disabled = {!category}
+                            disabled = {!subCategory}
                             >
                     </TextField>
                     </Box>

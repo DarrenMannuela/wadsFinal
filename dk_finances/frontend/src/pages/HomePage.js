@@ -3,9 +3,7 @@ import OpenDrawer from '../components/Drawers';
 import MonthlyPieChart from '../components/MonthlyPieChart';
 import WeeklyBarChart from '../components/WeeklyBarChart';
 import Box from '@mui/material/Box';
-
 import { Grid } from '@mui/material';
-import { Container } from '@mui/system';
 import {Typography} from '@mui/material';
 import DailyList from '../components/DailyList';
 
@@ -57,7 +55,6 @@ function HomePage(props){
                             <DailyList user_id={11}/>
                     </Grid>
                 </Grid>
-
             </Box>
         </body>
         

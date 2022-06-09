@@ -20,8 +20,8 @@ function MonthlyPieChart(props){
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
-        const monthNow = new Date().getMonth(); 
-        const monthData = new Date().getMonth()
+        const monthNow = new Date(cur.date_bought).getMonth(); 
+        const monthData = new Date().getMonth();
         if(monthData == monthNow){
           amountBasedOnCategory[cur.subcategory] += cur.price;
           setChartData(Object.values(amountBasedOnCategory))};

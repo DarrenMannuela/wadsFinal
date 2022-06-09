@@ -8,8 +8,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-function createData(date, category, subCategory, amount){
-    return{date, category, subCategory, amount};
+function createData(dateAdded, income){
+    return{dateAdded, income};
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -32,45 +32,37 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
-function TrackerTable(props){
+function BalanceTable(props){
   const cleanedRow = [];
   const [rows, setRows] = React.useState([]);
 
-  React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
+  React.useEffect(()=>{fetch(`api/incomes?${props.user_id}`)
   .then(res=>{return res.json()})
   .then(data =>{setRows(data)})
   }, []);
 
   rows.map(cur=>{
-    const monthNow = new Date(cur.date_bought).getMonth(); 
-    const monthData = new Date().getMonth();
-    if(monthData == monthNow){
-      var sepPrice = cur.price.toLocaleString();
-      cleanedRow.push(createData(cur.date_bought, cur.category, cur.subcategory, sepPrice))
-
-    }
+    var sepPrice = cur.income.toLocaleString();
+    cleanedRow.push(createData(cur.date_added, sepPrice))
+    
   })
 
   
 
    return(
-       <TableContainer component={Paper} sx={{maxHeight: 500 }}>
-           <Table stickyHeader sx={{minWidth: 700}}>
+       <TableContainer component={Paper} sx={{maxHeight: 100 }}>
+           <Table stickyHeader sx={{minWidth: 200}}>
                <TableHead>
                    <TableRow>
                         <StyledTableCell>Date</StyledTableCell>
-                        <StyledTableCell align="right">Category</StyledTableCell>
-                        <StyledTableCell align="right">Sub-Category</StyledTableCell>
-                        <StyledTableCell align="right">Amount</StyledTableCell>
+                        <StyledTableCell align="right">Income</StyledTableCell>
                    </TableRow>
                </TableHead>
                <TableBody>
                 {cleanedRow.map((row) => (
-                  <StyledTableRow key={row.date}>
-                    <StyledTableCell component='th' scope='row'>{row.date}</StyledTableCell>
-                    <StyledTableCell align="right">{row.category}</StyledTableCell>
-                    <StyledTableCell align="right">{row.subCategory}</StyledTableCell>
-                    <StyledTableCell align="right">{row.amount}</StyledTableCell>
+                  <StyledTableRow key={row.dateAdded}>
+                    <StyledTableCell component='th' scope='row'>{row.dateAdded}</StyledTableCell>
+                    <StyledTableCell align="right">{row.income}</StyledTableCell>
                   </StyledTableRow>
                 ))}
                </TableBody>
@@ -80,4 +72,4 @@ function TrackerTable(props){
 
 
 }
-export default TrackerTable;
+export default BalanceTable;

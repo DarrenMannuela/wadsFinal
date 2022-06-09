@@ -2,45 +2,35 @@ import React from 'react';
 import TextField from '@mui/material/TextField'; 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import classNames from "classnames";
 import Typography from '@mui/material/Typography';
-import { Container } from '@mui/system';
-import { CssBaseline } from '@mui/material';
 import Button from '@mui/material/Button';
 import OpenDrawer from '../components/Drawers';
+import BalanceTable from '../components/BalanceTable';
 
 function AddIncomePage(props){
     const [income, setIncome] = React.useState(0);
-    const [balance, setBalance] = React.useState(0);
 
     function handleIncome(event){
         setIncome(event.target.valueAsNumber);
-        console.info(event.target.value);
 
     }
-
-    React.useEffect(()=>{fetch('api/balances')
-    .then(res=>{return res.json()})
-    .then(data =>{
-      data.map(cur =>{
-        if(cur.user_id == 11){
-            setBalance(cur.balance)
-        };
-      })
-    })
-    }, []);
-
-    console.info(balance)
-
     function updateIncome(){
-        fetch('api/update-balance',{
-            method: 'PATCH',
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); 
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+        fetch('api/create-income',{
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                income: income,
+                date_added: today,
                 user_id: 11,
-                balance: income+balance
+                
               }),
         })
         .then((res) => {console.info(res.status);
@@ -51,45 +41,47 @@ function AddIncomePage(props){
     }
 
     return(
-        <Container component='main' maxWidth='xs' sx={{display: "flex"}}>
-            <CssBaseline>
-                <Box component='form' noValidate sx={{mt:7}}>
+        <body style={{display:'flex'}}>
+            <Box component='form'  columnSpacing={3} sx={{display:'flex', mt:"10%"}}>
+                <Grid>
                     <OpenDrawer/>
-                    <Typography variant="h5" align="center" sx={{paddingBottom: 2, mt:10}}>
+                </Grid>
+                <Grid container direction="row" sx={{mt:'5%', ml:'10%'}}>
+                    <Grid item xs={12}>
+                        <Typography variant="h5" align="center">
                         Add Income
-                    </Typography>
-                    <Grid xs={12} sm={6}>
-                        <Grid item xs={12} sm={6} sx={{paddingBottom: 2, width: 500}}>
-                                <TextField
-                                name="income"
-                                required
-                                fullWidth
-                                id="income"
-                                label="Income"
-                                type = "number"
-                                defaultValue={0}
-                                onChange={handleIncome}
-                                />
-                        </Grid>
-                    </Grid>
-                    <Button
-                        type="submit"
+                        </Typography>
+                        
+                        <TextField
+                        name="income"
+                        required
                         fullWidth
-                        variant="contained"
-                        display="flex"
-                        sx={{ mt: 3, mb: 2 }}
-                        onClick={updateIncome}
-                        disabled={!income}
-                        >
-                        Add Income
-                    </Button>
-                </Box>
-            </CssBaseline>
-        </Container>
-        
-      
+                        id="income"
+                        label="Income"
+                        type = "number"
+                        defaultValue={0}
+                        onChange={handleIncome}
+                        />
+
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            display="flex"
+                            sx={{ mt: 3, mb: 2 }}
+                            onClick={updateIncome}
+                            disabled={!income}
+                            >
+                            Add Income
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} >
+                        <BalanceTable user_id={props.user_id}/>
+                    </Grid>
+                </Grid>
+            </Box>
+        </body>
     )
 }
-
 
 export default AddIncomePage;

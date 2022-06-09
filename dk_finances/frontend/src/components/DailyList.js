@@ -8,8 +8,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-function createData(category, subCategory, amount){
-    return{category, subCategory, amount};
+function createData(date, category, subCategory, amount){
+    return{date, category, subCategory, amount};
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -49,26 +49,26 @@ function DailyList(props){
     date_bought.setHours(0, 0, 0, 0);
     if(today.getTime() == date_bought.getTime()){
       var sepPrice = cur.price.toLocaleString();
-      createRows.push(createData(cur.category, cur.subcategory, sepPrice));
+      createRows.push(createData(cur.date_bought, cur.category, cur.subcategory, sepPrice));
     };
   })
 
-  console.info(createRows);
-
     return(
       <TableContainer component={Paper} sx={{maxHeight: 200 }}>
-           <Table stickyHeader sx={{minWidth: 350}}>
+           <Table stickyHeader sx={{minWidth: 250}}>
                <TableHead>
                    <TableRow>
-                        <StyledTableCell>Category</StyledTableCell>
+                        <StyledTableCell>Date</StyledTableCell>
+                        <StyledTableCell align="right">Category</StyledTableCell>
                         <StyledTableCell align="right">Sub-Category</StyledTableCell>
                         <StyledTableCell align="right">Amount</StyledTableCell>
                    </TableRow>
                </TableHead>
                <TableBody>
                 {createRows.map((row) => (
-                  <StyledTableRow key={row.category}>
-                    <StyledTableCell component='th' scope='row'>{row.category}</StyledTableCell>
+                  <StyledTableRow key={row.date}>
+                    <StyledTableCell component='th' scope='row'>{row.date}</StyledTableCell>
+                    <StyledTableCell align="right">{row.category}</StyledTableCell>
                     <StyledTableCell align="right">{row.subCategory}</StyledTableCell>
                     <StyledTableCell align="right">{row.amount}</StyledTableCell>
                   </StyledTableRow>
