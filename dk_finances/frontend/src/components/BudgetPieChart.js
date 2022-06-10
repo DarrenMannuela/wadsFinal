@@ -1,21 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Chart} from 'chart.js';
 import {Typography} from '@mui/material';
 
+
 function BudgetPieChart(props){
     var needsWants = {needs: 0 , wants: 0};
-    const [chartData, setChartData] = useState(null);
-    const chartContainer = useRef(null);
-    const [chartInstance, setChartInstance] = useState(null);
-    const [balance, setBalance] = useState(null);
+    const [chartData, setChartData] = React.useState(null);
+    const chartContainer = React.useRef(null);
+    const [chartInstance, setChartInstance] = React.useState(null);
+    const [balance, setBalance] = React.useState(null);
 
-    useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
+    React.useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data=>{setBalance(data)})
     }, [])
 
   
-    useEffect(()=>{fetch(`api/history?${props.user_id}`)
+    React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
@@ -76,7 +77,7 @@ function BudgetPieChart(props){
         }
       };
   
-      useEffect(() => {
+      React.useEffect(() => {
           if (chartContainer && chartContainer.current) {
           const newChartInstance = new Chart(chartContainer.current, chartConfig);
           setChartInstance(newChartInstance);

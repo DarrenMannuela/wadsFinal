@@ -17,35 +17,20 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
+//The size of the drawer width
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: `-${drawerWidth}px`,
-    ...(open && {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    }),
-  }),
-);
-
+//Creates an Appbar to access the tool bar  
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
+  //Setting the themes and transition for the action when the appbar is open and closing
   transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
+    //Setting the themes and transition for the action when the appbar is closed and opening
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: `${drawerWidth}px`,
     transition: theme.transitions.create(['margin', 'width'], {
@@ -55,6 +40,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+//Setting the structure of the drawer 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -64,38 +50,51 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function Drawers(props) {
+//Functional component for Drawers
+ function Drawers(props) {
+   //Gets store the mui useTheme to use on the drawer
   const theme = useTheme();
+
+  //keeps track whether the drawer is open or not
   const [open, setOpen] = React.useState(false);
+
+  //Stores the users savings, needs and wants
   const [savings, setSavings] = React.useState(null);
   const [needs, setNeeds] = React.useState(null);
   const [wants, setWants] = React.useState(null);
 
+  //Stores both path and its corresponding page name in two seperate objects
   const paths = {'Dashboard': '/', 'Smart Split': '/smartsplit', 'Tracker': '/tracker', 'Add Income': '/addincome'}
   const page = {'/': 'Dashboard', '/smartsplit': 'Smart Split', '/tracker': 'Tracker' , '/addincome': 'Add Income'}
 
+  //Fetches from the budegt allocation table
   React.useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
   .then(res=>{return res.json()})
   .then(data =>{data.map(cur=>{
+
+    //Seperates the digits in 3 digit intervals
     var sepSavings = cur.savings.toLocaleString();
     var sepNeeds = cur.needs.toLocaleString();
     var sepWants = cur.wants.toLocaleString();
 
+    //Set the data to its corresponding useState
     setSavings(sepSavings);
     setNeeds(sepNeeds);
     setWants(sepWants);
   })})
   }, []);
 
-
+  //Handles the opening of the Drawer
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
+  //Handles the closing of the Drawer
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
+  //Gets the current page the user is on based on the url path
   function handleCurPage(){
     const location = useLocation();
     return(page[location.pathname])
@@ -169,4 +168,4 @@ export default function Drawers(props) {
   );
 }
 
-
+export default Drawers;
