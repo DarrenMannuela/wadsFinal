@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import { Grid } from '@mui/material';
 import {Typography} from '@mui/material';
 import DailyList from '../components/DailyList';
+import { Navigate } from 'react-router-dom';
 
 
 function HomePage(props){
@@ -14,7 +15,13 @@ function HomePage(props){
     var spentSeperate = dailyAmount.toLocaleString();
 
 
-    React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
+    React.useEffect(()=>{fetch('api/get-history', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${props.token}`
+        },
+      })
     .then(res=>{return res.json()})
     .then(data =>{
         const today = new Date(); 
@@ -32,16 +39,17 @@ function HomePage(props){
     
     return(
         <body style={{display:'flex'}}>
+            {!props.isLoggedIn && <Navigate to="/login" />}
             <Box component='form' rowSpacing={2} sx={{display:'flex'}}>
                 <Grid>
-                    <OpenDrawer/>
+                    <OpenDrawer token={props.token}/>
                 </Grid>
                 <Grid container direction="row" sx={{mt:'5%', mr:'5%'}}>
                     <Grid item xs={6}>
-                        <MonthlyPieChart user_id={11}/>
+                        <MonthlyPieChart token={props.token}/>
                     </Grid>
                     <Grid item xs={6}>
-                        <WeeklyBarChart user_id={11}/>
+                        <WeeklyBarChart token={props.token}/>
                     </Grid>
                     <Grid item xs={6} sx={{mt: "3%"}}>
                         <Typography variant="h6" gutterBottom component="div">
@@ -52,7 +60,7 @@ function HomePage(props){
                         </Typography>
                     </Grid>
                     <Grid item xs={6} sx={{mt: "3%"}}>
-                            <DailyList user_id={11}/>
+                            <DailyList token={props.token}/>
                     </Grid>
                 </Grid>
             </Box>

@@ -23,7 +23,13 @@ function BudgetPieChart(props){
     // }, [])
 
     //Fetch the history table  
-    React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
+    React.useEffect(()=>{fetch('api/get-history', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${props.token}`
+      },
+    })
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
@@ -43,7 +49,6 @@ function BudgetPieChart(props){
         }
       });
     })
-    .then()
     }, []);
 
     //Chart configs

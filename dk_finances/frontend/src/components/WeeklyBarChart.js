@@ -19,7 +19,13 @@ function WeeklyBarChart(props){
 
 
   //Fetches data from the history table
-  React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
+  React.useEffect(()=>{fetch('api/history?', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${props.token}`
+    },
+    })
     .then(res=>{return res.json()})
     .then(data =>{
       //Get today's date and day

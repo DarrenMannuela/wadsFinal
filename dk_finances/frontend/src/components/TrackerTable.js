@@ -46,7 +46,13 @@ function TrackerTable(props){
   const [rows, setRows] = React.useState([]);
 
   //Fetch data from the history table
-  React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
+  React.useEffect(()=>{fetch('api/get-history', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${props.token}`
+    },
+  })
   .then(res=>{return res.json()})
   .then(data =>{setRows(data)})
   }, []);

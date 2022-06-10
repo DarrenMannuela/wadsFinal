@@ -21,7 +21,13 @@ function MonthlyPieChart(props){
     const [chartInstance, setChartInstance] = React.useState(null);
   
     //Fetches the history table 
-    React.useEffect(()=>{fetch(`api/history?${props.user_id}`,)
+    React.useEffect(()=>{fetch('api/get-history', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${props.token}`
+      },
+    })
     .then(res=>{return res.json()})
     .then(data =>{
       //Iterates through the fetched data and checks if the date bought is within the current month

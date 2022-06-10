@@ -68,20 +68,22 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   const page = {'/': 'Dashboard', '/smartsplit': 'Smart Split', '/tracker': 'Tracker' , '/addincome': 'Add Income'}
 
   //Fetches from the budegt allocation table
-  React.useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
+  React.useEffect(()=>{fetch(`api/get-budget-allocation`, {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${props.token}`
+    },
+  })
   .then(res=>{return res.json()})
-  .then(data =>{data.map(cur=>{
-
-    //Seperates the digits in 3 digit intervals
-    var sepSavings = cur.savings.toLocaleString();
-    var sepNeeds = cur.needs.toLocaleString();
-    var sepWants = cur.wants.toLocaleString();
-
-    //Set the data to its corresponding useState
+  .then(data =>{
+    var sepSavings = data.savings.toLocaleString();
+    var sepNeeds = data.needs.toLocaleString();
+    var sepWants = data.wants.toLocaleString();
     setSavings(sepSavings);
     setNeeds(sepNeeds);
     setWants(sepWants);
-  })})
+  })
   }, []);
 
   //Handles the opening of the Drawer

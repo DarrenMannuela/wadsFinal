@@ -1,17 +1,16 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import BudgetPieChart from '../components/BudgetPieChart';
 import OpenDrawer from '../components/Drawers';
 import AddCategorySmartSplit from '../components/AddCategorySmartSplit';
+import { Navigate } from 'react-router-dom';
 
 function SmartSplitPage(props){
+    console.log(props.token)
 
     return(
         <body style={{display:'flex'}}>
-            <OpenDrawer/>
-            <AddCategorySmartSplit/>
+            {!props.isLoggedIn && <Navigate to="/login" />}
+            <OpenDrawer token={props.token}/>
+            <AddCategorySmartSplit token={props.token}/>
         </body>
      )
     

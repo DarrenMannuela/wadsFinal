@@ -5,10 +5,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
 from .models import Account, BudgetAllocation, History, Balance, Income
 from .serializers import (AccountSerializer, BudgetAllocationSerializer, CreateAccountSerializer,
                           CreateHistorySerializer, CreateBalanceSerializer, CreateIncomeSerializer,
-                          BalanceSerializer, IncomeSerializer, UpdateBalanceSerializer,
+                          BalanceSerializer, GetAccountSerializer, GetBalanceSerializer, GetBudgetAllocationSerializer, GetHistorySerializer, GetIncomeSerializer, IncomeSerializer, UpdateBalanceSerializer,
                           UserSerializer, HistorySerializer)
 
 
@@ -22,7 +23,20 @@ class AccountView(generics.ListAPIView):
     serializer_class = AccountSerializer
 
 
+class GetAccountView(generics.ListAPIView):
+    serializer_class = GetAccountSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        account = model_to_dict(Account.objects.get(user_id=user))
+        return Response(account, status=status.HTTP_200_OK)
+
+
 class CreateAccountView(APIView):
+    serializer_class = CreateAccountSerializer
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
@@ -48,14 +62,29 @@ class BalanceView(generics.ListAPIView):
     serializer_class = BalanceSerializer
 
 
+class GetBalanceView(generics.ListAPIView):
+    serializer_class = GetBalanceSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        balance = model_to_dict(Balance.objects.get(user_id=user))
+        return Response(balance, status=status.HTTP_200_OK)
+
+
 class CreateBalanceView(APIView):
     serializer_class = CreateBalanceSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            print("it went through here")
             balance = serializer.data.get('balance')
-            user_id = serializer.data.get('user_id')
+            user_id = Token.objects.get(key=request.auth.key).user_id
             user = User.objects.get(id=user_id)
             account = Account.objects.get(user_id=user)
             if not Balance.objects.filter(user_id=user).exists():
@@ -107,20 +136,23 @@ class CreateBalanceView(APIView):
                 user_balance.user_id = user
                 user_balance.save(update_fields=['balance', 'user_id'])
                 return Response([BalanceSerializer(user_balance).data, BudgetAllocationSerializer(user_budget_allocation).data], status=status.HTTP_201_CREATED)
+        return Response({'Bad Request': "Invalid data..."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateBalance(APIView):
     serializer_class = UpdateBalanceSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
     def patch(self, request, format=None):
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
+        # if not self.request.session.exists(self.request.session.session_key):
+        #     self.request.session.create()
 
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
             balance = serializer.data.get('balance')
-            user_id = serializer.data.get('user_id')
+            user_id = Token.objects.get(key=request.auth.key).user_id
             user = User.objects.get(id=user_id)
             account = Account.objects.get(user_id=user)
 
@@ -167,8 +199,22 @@ class IncomeView(generics.ListAPIView):
     serializer_class = IncomeSerializer
 
 
+class GetIncomeView(generics.ListAPIView):
+    serializer_class = GetIncomeSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        income = Income.objects.all().filter(user_id=user).values()
+        return Response(income, status=status.HTTP_200_OK)
+
+
 class CreateIncomeView(APIView):
     serializer_class = CreateIncomeSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -176,7 +222,7 @@ class CreateIncomeView(APIView):
         if serializer.is_valid():
             income = serializer.data.get('income')
             date_added = serializer.data.get('date_added')
-            user_id = serializer.data.get('user_id')
+            user_id = Token.objects.get(key=request.auth.key).user_id
             user = User.objects.get(id=user_id)
             account = Account.objects.get(user_id=user)
             user_income = Income(
@@ -208,13 +254,39 @@ class BudgetAllocationView(generics.ListAPIView):
     serializer_class = BudgetAllocationSerializer
 
 
+class GetBudgetAllocationView(generics.ListAPIView):
+    serializer_class = GetBudgetAllocationSerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        budget_allocation = model_to_dict(BudgetAllocation.objects.get(user_id=user))
+        return Response(budget_allocation, status=status.HTTP_200_OK)
+
+
 class HistoryView(generics.ListAPIView):
     queryset = History.objects.all()
     serializer_class = HistorySerializer
 
 
+class GetHistoryView(generics.ListAPIView):
+    serializer_class = GetHistorySerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        history = History.objects.all().filter(user_id=user).values()
+        return Response(history, status=status.HTTP_200_OK)
+
+
 class CreateHistoryview(APIView):
     serializer_class = CreateHistorySerializer
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -223,7 +295,7 @@ class CreateHistoryview(APIView):
             subcategory = serializer.data.get('subcategory')
             price = serializer.data.get('price')
             date_bought = serializer.data.get('date_bought')
-            user_id = serializer.data.get('user_id')
+            user_id = Token.objects.get(key=request.auth.key).user_id
             user = User.objects.get(id=user_id)
             history = History(category=category, subcategory=subcategory, price=price,
                               date_bought=date_bought, user_id=user)

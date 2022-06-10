@@ -102,13 +102,13 @@ function AddCategorySmartSplit(props){
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Token ${props.token}`
             },
             body: JSON.stringify({
                 category: needWant,
                 subcategory: subCategory,
                 price: amount,
                 date_bought: today,
-                user_id: 11
             }),           
         })
         .then((res) => {console.info(res.status);
@@ -126,7 +126,7 @@ function AddCategorySmartSplit(props){
     <Box component='form' rowSpacing={2} sx={{display:'flex'}}>
         <Grid container direction="row" sx={{mt:'15%'}}>
             <Grid item xs={8}>
-                <BudgetPieChart user_id = {11}/>
+                <BudgetPieChart token={props.token}/>
             </Grid>
             <Grid item xs={4}>
                 <Paper elevation={12} sx={{width: 350, height: 350 }}>

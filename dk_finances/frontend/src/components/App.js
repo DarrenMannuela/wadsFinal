@@ -6,27 +6,32 @@ import SignUpPage from "../pages/SignUpPage";
 import SmartSplitPage from "../pages/SmartSplitPage";
 import TrackerPage from "../pages/TrackerPage";
 import AddIncomePage from "../pages/AddIncomePage";
-import {BrowserRouter as Router, Routes, Route, Link, Redirect} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
 function App(props) {
-        const [token, setToken] = useState(null);
+        const [token, setToken] = useState("");
+        const [isLoggedIn, setIsLoggedIn] = useState(false);
 
         const userLogin = (e) => {
                 setToken(e);
-                console.log(e);
+                setIsLoggedIn(true);
             }
 
+        const userLogout = () => {
+                setToken("");
+                setIsLoggedIn(false);
+        }
+
         return(    
-                
                 <Router>
                         <Routes>
-                                <Route path='/' element={<HomePage/>}></Route>
-                                <Route path='/login' element={<LoginPage/>}></Route>
+                                <Route path='/' element={<HomePage isLoggedIn={isLoggedIn} token={token}/>}></Route>
+                                <Route path='/login' element={<LoginPage userLogin={userLogin} />}></Route>
                                 <Route path='/signup' element={<SignUpPage userLogin={userLogin} token={token}/>}></Route>
-                                <Route path='/smartsplit' element={<SmartSplitPage/>}></Route>
-                                <Route path='/tracker' element={<TrackerPage/>}></Route>
-                                <Route path='/addincome' element={<AddIncomePage/>}></Route>
+                                <Route path='/smartsplit' element={<SmartSplitPage isLoggedIn={isLoggedIn} token={token}/>}></Route>
+                                <Route path='/tracker' element={<TrackerPage isLoggedIn={isLoggedIn} token={token}/>}></Route>
+                                <Route path='/addincome' element={<AddIncomePage isLoggedIn={isLoggedIn} token={token}/>}></Route>
                         </Routes>
                         
                 </Router>

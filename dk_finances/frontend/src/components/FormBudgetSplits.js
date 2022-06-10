@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 import { Container } from '@mui/system';
 import { CssBaseline } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -12,17 +13,21 @@ import Button from '@mui/material/Button';
 
 function FormBudgetSplits(props){
     const min = 0;
-
-    const registerAccountAndNext = (e) => {
-        e.preventDefault();
-        props.registerAccount();
-        props.nextStep();
-    };
+    const [total100, setTotal100] = useState(true);
 
     const back = (e) => {
         e.preventDefault();
         props.prevStep();
     };
+
+    const handleFormSubmission = (e) => {
+        e.preventDefault();
+        if (props.needs_split + props.wants_split + props.savings_split == 100) {
+            props.nextStep();
+        } else {
+            setTotal100(false);
+        }
+    }
 
     const theme = createTheme({
         palette: {
@@ -34,16 +39,17 @@ function FormBudgetSplits(props){
       });
 
     return(
-        <Container component='main' maxWidth='xs' sx={{mt: '3%', display: "flex"}}>
+        <Container component='main' maxWidth='xs' sx={{mt: '1%', display: "flex"}}>
             <CssBaseline>
                 <Paper elevation={12} sx={{width: 500, height: 700, pt: 7}}>
-                <Typography variant="h1" align="center" sx={{ fontSize:24, fontWeight: 600 }}>
-                    Account Creation
+                <Typography variant="h1" align="center" sx={{ fontSize:24, fontWeight: 600, mx: 5 }}>
+                    Setting your budget allocation.
                 </Typography>
-                <Typography variant="h2" align="center" sx={{ mt: 5, fontSize:12}}>
-                    Please input the percentage of your budget you desire for each category
+                <Typography variant="h2" align="center" sx={{ mt: 5, mx: 5, fontSize:16}}>
+                    Please input the percentage of your budget you desire for each category and make sure the fields add up to 100.
                 </Typography>
-                <Box component='form' sx={{ mt: 9 }} onSubmit={registerAccountAndNext}>
+                {!total100 && <Alert severity='error' sx={{ mt: 2, mx: 10 }}>The fields should all sum up to 100.</Alert>}
+                <Box component='form' sx={{ mt: 3 }} onSubmit={handleFormSubmission}>
                     <Grid>
                         <Grid item xs={12} sm={6} sx={{pb: 5, px:12}}>
                             <TextField
@@ -127,9 +133,9 @@ function FormBudgetSplits(props){
                             type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 5}}
+                            sx={{ mt: 2}}
                             >
-                            Finish
+                            Continue
                         </Button>
                     </Grid>
                     <Grid sx={{ px: 15}}>

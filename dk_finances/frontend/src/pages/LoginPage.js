@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import TextField from '@mui/material/TextField'; 
 import Grid from '@mui/material/Grid';
@@ -8,37 +8,60 @@ import Typography from '@mui/material/Typography';
 import { Container } from '@mui/system';
 import { CssBaseline } from '@mui/material';
 import Button from '@mui/material/Button';
+import { useNavigate, Navigate } from 'react-router';
+
 
 
 function LoginPage(props){
-
+    const userList = [];
+    const [usernameQuery, setUsernameQuery] = useState([]);
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetch('api/users')
+        .then( (res) => {
+            return res.json();
+        })
+        .then( (data) => {
+            setUsernameQuery(data);
+        })
+        .catch( (err) => {
+            console.log(err);
+        });
+    }, []);
+
+    usernameQuery.map((item) => {
+        userList.push(item.username);
+    })
 
     const handleLogin = (e) => {
         e.preventDefault();
         const user = { username, password };
-        fetch('http://127.0.0.1:8000/auth', {
+        fetch('auth', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(user)
         })
         .then((data) => data.json())
         .then((data) => {
-            console.log(data.token);
+            props.userLogin(data.token);
+            navigate('/');
             }
         )
         .catch((error) => console.error(error))
     }
 
     return(
-        <Container component='main' maxWidth='xs' sx={{mt: '3%', display: "flex"}}>
+        <Container component='main' maxWidth='xs' sx={{mt: '1%', display: "flex"}}>
+            {props.isLoggedIn && <Navigate to="/" />}
             <CssBaseline>
-            <Paper elevation={12} sx={{width: 700, height: 700, pt: 7}}>
+            <Paper elevation={12} sx={{width: 500, height: 700, pt: 7}}>
             <Typography variant="h1" align="center" sx={{ fontSize:24, fontWeight: 600 }}>
                     Login
                 </Typography>
-                <Box component='form' noValidate sx={{ mt:15 }} onSubmit={handleLogin}>
+                <Box component='form' noValidate sx={{ mt:8 }} onSubmit={handleLogin}>
                     <Grid>
                         <Grid item xs={12} sm={6} sx={{pb: 5, px: 12}}>
                             <TextField
@@ -48,7 +71,6 @@ function LoginPage(props){
                                 id="username"
                                 label="Username"
                                 type="username"
-                                autoFocus
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
@@ -68,14 +90,6 @@ function LoginPage(props){
                                 />
                         </Grid>
                     </Grid>
-                    {/* <Grid>
-                        <Grid item xs={12} sx={{pt: 2, px: 4}}>
-                        <FormControlLabel
-                            control={<Checkbox value="allowExtraEmails" color="primary" />}
-                            label="Login"
-                            />
-                        </Grid>
-                    </Grid> */}
                     <Grid sx={{ px: 15}}>
                         <Button
                             type="submit"

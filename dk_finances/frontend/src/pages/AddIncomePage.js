@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import OpenDrawer from '../components/Drawers';
 import BalanceTable from '../components/BalanceTable';
+import { Navigate } from 'react-router-dom';
 
 function AddIncomePage(props){
     const [income, setIncome] = React.useState(0);
@@ -20,16 +21,18 @@ function AddIncomePage(props){
         var mm = String(today.getMonth() + 1).padStart(2, '0'); 
         var yyyy = today.getFullYear();
 
+
         today = yyyy + '-' + mm + '-' + dd;
+
         fetch('api/create-income',{
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Token ${props.token}`
             },
             body: JSON.stringify({
                 income: income,
                 date_added: today,
-                user_id: 11,
                 
               }),
         })
@@ -42,9 +45,10 @@ function AddIncomePage(props){
 
     return(
         <body style={{display:'flex'}}>
+             {!props.isLoggedIn && <Navigate to="/login" />}
             <Box component='form'  columnSpacing={3} sx={{display:'flex', mt:"10%", ml:"20%"}}>
                 <Grid>
-                    <OpenDrawer/>
+                    <OpenDrawer token={props.token}/>
                 </Grid>
                 <Grid container direction="row" sx={{mt:'5%', ml:'10%'}}>
                     <Grid item xs={12}>
@@ -64,7 +68,6 @@ function AddIncomePage(props){
                         />
 
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             display="flex"
@@ -76,7 +79,7 @@ function AddIncomePage(props){
                         </Button>
                     </Grid>
                     <Grid item xs={12} >
-                        <BalanceTable user_id={props.user_id}/>
+                        <BalanceTable token={props.token}/>
                     </Grid>
                 </Grid>
             </Box>
