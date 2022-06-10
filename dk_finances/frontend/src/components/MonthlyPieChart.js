@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Chart} from 'chart.js';
 import {Typography} from '@mui/material';
 
@@ -6,24 +6,30 @@ import {Typography} from '@mui/material';
 
 function MonthlyPieChart(props){
 
-  
+    //Stores the amount spent based on subcategory
     var amountBasedOnCategory = {"Food": 0, "Transportation": 0, "Travel": 0, 
     "Housing": 0, "Utility bills": 0, "Cellphone": 0, 
     "Groceries": 1200, "Clothing": 0, "Healthcare": 0,
     "Childcare": 0, "Pet Necessities": 0, "Pet Insurance": 0,
     "Subscriptions": 0, "Others": 0}
 
-    const [chartData, setChartData] = useState(null);
-    const chartContainer = useRef(null);
-    const [chartInstance, setChartInstance] = useState(null);
+    //Holds the data to be displayed within the chart
+    const [chartData, setChartData] = React.useState(null);
+
+    //Holds the current chart instance
+    const chartContainer = React.useRef(null);
+    const [chartInstance, setChartInstance] = React.useState(null);
   
-    useEffect(()=>{fetch(`api/history?${props.user_id}`,)
+    //Fetches the history table 
+    React.useEffect(()=>{fetch(`api/history?${props.user_id}`,)
     .then(res=>{return res.json()})
     .then(data =>{
+      //Iterates through the fetched data and checks if the date bought is within the current month
       data.map(cur =>{
         const monthNow = new Date(cur.date_bought).getMonth(); 
         const monthData = new Date().getMonth();
         if(monthData == monthNow){
+          //Adds the data values within amountBasedCategory based on their subcategory
           amountBasedOnCategory[cur.subcategory] += cur.price;
           setChartData(Object.values(amountBasedOnCategory))};
       })
@@ -31,7 +37,7 @@ function MonthlyPieChart(props){
     }, []);
 
 
-      
+    //Configuration of the chart
     const chartConfig = {
       type: "doughnut",
       width: "30%",
@@ -92,19 +98,20 @@ function MonthlyPieChart(props){
       }}
       };
 
-
-    useEffect(() => {
+      //Set the chart instance based on the given data
+      React.useEffect(() => {
         if (chartContainer && chartContainer.current) {
         const newChartInstance = new Chart(chartContainer.current, chartConfig);
         setChartInstance(newChartInstance);
         }
-    }, [chartContainer]);
+      }, [chartContainer]);
 
   
-
+    //Function to update the chart values
     function updateChart(datasetIndex, fetchedData){
       var prevData = chartInstance.data.datasets[datasetIndex].data;
       for(var i=0; i<prevData.length; i++){
+        //if any of the data within the new data is different, update the chart instance
         if(prevData[i] != fetchedData[i]){
           chartInstance.data.datasets[datasetIndex].data = fetchedData;
           chartInstance.update();

@@ -4,30 +4,40 @@ import {Typography} from '@mui/material';
 
 
 function BudgetPieChart(props){
+    //Store the total sum amount of both needs and wants categories
     var needsWants = {needs: 0 , wants: 0};
+
+    //Holds the data to be displayed within the chart
     const [chartData, setChartData] = React.useState(null);
+
+    //Holds the current chart instance
     const chartContainer = React.useRef(null);
     const [chartInstance, setChartInstance] = React.useState(null);
-    const [balance, setBalance] = React.useState(null);
 
-    React.useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
-    .then(res=>{return res.json()})
-    .then(data=>{setBalance(data)})
-    }, [])
 
-  
+    // const [balance, setBalance] = React.useState(null);
+
+    // React.useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
+    // .then(res=>{return res.json()})
+    // .then(data=>{setBalance(data)})
+    // }, [])
+
+    //Fetch the history table  
     React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
+        //Get the current month and the date of the current data
         const monthNow = new Date(cur.date_bought).getMonth(); 
         const monthData = new Date().getMonth();
         if(monthData == monthNow){
+          //Adds the data price into needsWants
           if(cur.category == 'Needs'){
             needsWants['needs'] += cur.price;
           }else{
             needsWants['wants'] += cur.price;
           }
+          //Set the chart data based on the needsWants values
           setChartData(Object.values(needsWants));
 
         }
@@ -36,7 +46,7 @@ function BudgetPieChart(props){
     .then()
     }, []);
 
-
+    //Chart configs
     const chartConfig = {
         type: "doughnut",
         width: "30%",
@@ -77,6 +87,7 @@ function BudgetPieChart(props){
         }
       };
   
+      //Set the chart instance based on the given data
       React.useEffect(() => {
           if (chartContainer && chartContainer.current) {
           const newChartInstance = new Chart(chartContainer.current, chartConfig);
@@ -84,9 +95,11 @@ function BudgetPieChart(props){
           }
       }, [chartContainer]);
 
+      //Function to update the chart values
       function updateChart(datasetIndex, fetchedData){
         var prevData = chartInstance.data.datasets[datasetIndex].data;
         for(var i=0; i<prevData.length; i++){
+          //if any of the data within the new data is different, update the chart instance
           if(prevData[i] != fetchedData[i]){
             chartInstance.data.datasets[datasetIndex].data = fetchedData;
             chartInstance.update();

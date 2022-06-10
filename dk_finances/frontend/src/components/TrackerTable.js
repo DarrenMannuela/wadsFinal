@@ -8,20 +8,25 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
+//Creates the data held within the table
 function createData(date, category, subCategory, amount){
     return{date, category, subCategory, amount};
 }
 
+//Styles the table header
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  //black colored cell header and for the font to have the color white
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
       color: theme.palette.common.white,
     },
+    //sets the fontsize of table content to 14
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
     },
   }));
   
+  //Styles the table rows
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.action.hover,
@@ -32,18 +37,25 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 
+//Functional component for showing the history
 function TrackerTable(props){
+
   const cleanedRow = [];
+  
+  //Store the fetched rows from the api
   const [rows, setRows] = React.useState([]);
 
+  //Fetch data from the history table
   React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
   .then(res=>{return res.json()})
   .then(data =>{setRows(data)})
   }, []);
 
+  //Going through all values received and creating their corresponding data within the table
   rows.map(cur=>{
     const monthNow = new Date(cur.date_bought).getMonth(); 
     const monthData = new Date().getMonth();
+    //Only takes data that is within the current month
     if(monthData == monthNow){
       var sepPrice = cur.price.toLocaleString();
       cleanedRow.push(createData(cur.date_bought, cur.category, cur.subcategory, sepPrice))

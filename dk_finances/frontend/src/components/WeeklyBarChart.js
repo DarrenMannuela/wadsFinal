@@ -4,30 +4,46 @@ import {Typography} from '@mui/material';
 
 
 function WeeklyBarChart(props){
+  //Used to display the days of the week based on the order given from .getDay()
   const week = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+  //Stores the amount spent on each day of the week 
   const weekChart = {"Sunday": 0,"Monday": 0,"Tuesday": 0,"Wednesday": 0,"Thursday": 0,"Friday": 0,"Saturday": 0};
-  const chartContainer = useRef(null);
-  const [chartInstance, setChartInstance] = useState(null);
-  const [chartData, setChartData] = useState(null);
+
+  //Holds the data to be displayed within the chart
+  const chartContainer = React.useRef(null);
+
+  //Holds the current chart instance
+  const [chartInstance, setChartInstance] = React.useState(null);
+  const [chartData, setChartData] = React.useState(null);
 
 
-  useEffect(()=>{fetch(`api/history?${props.user_id}`)
+  //Fetches data from the history table
+  React.useEffect(()=>{fetch(`api/history?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data =>{
+      //Get today's date and day
       const today = new Date();
       const getDate = today.getDate();
+
+      //Get the first date of the week and last date of the week+1
       const first = getDate - today.getDay();
       const last = first + 7;
 
+      //Get the dates of the first day and last day
       const firstDay = new Date(today.setDate(first));
       const lastDay = new Date(today.setDate(last));
 
+      //Set their hours to 0
       firstDay.setHours(0, 0, 0, 0);
       lastDay.setHours(0, 0, 0, 0)
 
       data.map(cur =>{
+        //Get the date of the current data and set its hours to 0
         const d = new Date(cur.date_bought);
         d.setHours(0, 0, 0, 0);
+
+        //Checks if the date is bteween the first date and the last day 
         if(firstDay.getTime()>=d.getTime()<lastDay.getTime()){
           weekChart[week[d.getDay()]] += cur.price;
           setChartData(Object.values(weekChart))}
@@ -35,6 +51,7 @@ function WeeklyBarChart(props){
     })
     }, []);
 
+  //Chart configurations
   const chartConfig = {
       type: "bar",
       width: "50%",
@@ -84,19 +101,22 @@ function WeeklyBarChart(props){
 
     
 
-    useEffect(() => {
+    //Set the chart instance based on the given data
+    React.useEffect(() => {
         if (chartContainer && chartContainer.current) {
         const newChartInstance = new Chart(chartContainer.current, chartConfig);
         setChartInstance(newChartInstance);
         }
     }, [chartContainer]);
 
+    //Function to update the chart values
     function updateChart(datasetIndex, fetchedData){
       chartInstance.data.datasets[datasetIndex].data = fetchedData;
       chartInstance.update();
       };
       
       
+
     if(chartData != null){
       updateChart(0, Object.values(chartData));
     }
