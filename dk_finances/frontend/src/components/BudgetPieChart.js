@@ -7,20 +7,32 @@ function BudgetPieChart(props){
     const [chartData, setChartData] = useState(null);
     const chartContainer = useRef(null);
     const [chartInstance, setChartInstance] = useState(null);
+    const [balance, setBalance] = useState(null);
+
+    useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
+    .then(res=>{return res.json()})
+    .then(data=>{setBalance(data)})
+    }, [])
 
   
     useEffect(()=>{fetch(`api/history?${props.user_id}`)
     .then(res=>{return res.json()})
     .then(data =>{
       data.map(cur =>{
-        if(cur.category == 'Needs'){
-          needsWants['needs'] += cur.price;
-        }else{
-          needsWants['wants'] += cur.price;
+        const monthNow = new Date(cur.date_bought).getMonth(); 
+        const monthData = new Date().getMonth();
+        if(monthData == monthNow){
+          if(cur.category == 'Needs'){
+            needsWants['needs'] += cur.price;
+          }else{
+            needsWants['wants'] += cur.price;
+          }
+          setChartData(Object.values(needsWants));
+
         }
-        setChartData(Object.values(needsWants));
       });
     })
+    .then()
     }, []);
 
 

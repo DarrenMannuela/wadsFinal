@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -16,7 +16,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-
 
 const drawerWidth = 240;
 
@@ -65,10 +64,29 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function OpenDrawer() {
+export default function Drawers(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [savings, setSavings] = React.useState(null);
+  const [needs, setNeeds] = React.useState(null);
+  const [wants, setWants] = React.useState(null);
+
   const paths = {'Dashboard': '/', 'Smart Split': '/smartsplit', 'Tracker': '/tracker', 'Add Income': '/addincome'}
+  const page = {'/': 'Dashboard', '/smartsplit': 'Smart Split', '/tracker': 'Tracker' , '/addincome': 'Add Income'}
+
+  React.useEffect(()=>{fetch(`api/budget-allocation?${props.user_id}`)
+  .then(res=>{return res.json()})
+  .then(data =>{data.map(cur=>{
+    var sepSavings = cur.savings.toLocaleString();
+    var sepNeeds = cur.needs.toLocaleString();
+    var sepWants = cur.wants.toLocaleString();
+
+    setSavings(sepSavings);
+    setNeeds(sepNeeds);
+    setWants(sepWants);
+  })})
+  }, []);
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -77,6 +95,14 @@ export default function OpenDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  function handleCurPage(){
+    const location = useLocation();
+    return(page[location.pathname])
+  }
+
+ 
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -93,8 +119,21 @@ export default function OpenDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Dashboard
+            {handleCurPage()}
           </Typography>
+          
+          <Typography variant="h6" noWrap component="div" sx={{ml:"15%", mr:"5%", fontSize: 18}}>
+            {`Savings: Rp-${savings}`}
+          </Typography>
+
+          <Typography variant="h6" noWrap component="div" sx={{mx:"5%", fontSize: 18}}>
+            {`Needs: Rp-${needs}`}
+          </Typography>
+
+          <Typography variant="h6" noWrap component="div" sx={{mx:"5%", fontSize: 18}}>
+            {`Wants: Rp-${wants}`}
+          </Typography>
+
         </Toolbar>
       </AppBar>
       <Drawer

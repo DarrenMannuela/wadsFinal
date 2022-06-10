@@ -42,7 +42,7 @@ function AddIncomePage(props){
 
     return(
         <body style={{display:'flex'}}>
-            <Box component='form'  columnSpacing={3} sx={{display:'flex', mt:"10%"}}>
+            <Box component='form'  columnSpacing={3} sx={{display:'flex', mt:"10%", ml:"20%"}}>
                 <Grid>
                     <OpenDrawer/>
                 </Grid>
