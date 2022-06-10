@@ -6,6 +6,7 @@ import {Typography} from '@mui/material';
 
 function MonthlyPieChart(props){
 
+  
     var amountBasedOnCategory = {"Food": 0, "Transportation": 0, "Travel": 0, 
     "Housing": 0, "Utility bills": 0, "Cellphone": 0, 
     "Groceries": 1200, "Clothing": 0, "Healthcare": 0,
