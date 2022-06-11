@@ -48,15 +48,23 @@ function BalanceTable(props){
   const [rows, setRows] = React.useState([]);
 
   //Fetches from the incomes table
-  React.useEffect(()=>{fetch('api/get-income', {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${props.token}`
-    },
-  })
-  .then(res=>{return res.json()})
-  .then(data =>{setRows(data)})
+  React.useEffect(()=>{
+    
+    const fetchIncome = async ()=>{
+      await fetch('api/get-income', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${props.token}`
+        },
+      })
+      .then(res=>{return res.json()})
+      .then(data =>{setRows(data)})
+
+    }
+
+    fetchIncome();
+    
   }, []);
 
   //Going through all values received and creating their corresponding data within the table

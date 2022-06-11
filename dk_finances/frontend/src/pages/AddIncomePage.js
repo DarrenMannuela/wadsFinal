@@ -15,7 +15,7 @@ function AddIncomePage(props){
         setIncome(event.target.valueAsNumber);
 
     }
-    function updateIncome(){
+    async function updateIncome(){
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); 
@@ -24,7 +24,7 @@ function AddIncomePage(props){
 
         today = yyyy + '-' + mm + '-' + dd;
 
-        fetch('api/create-income',{
+        await fetch('api/create-income',{
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

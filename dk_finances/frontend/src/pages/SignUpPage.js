@@ -32,8 +32,8 @@ function SignUpPage(props){
         setStep(step-1);
     };
 
-    const registerUser = (e) => {
-        fetch('api/users/', {
+    const registerUser = async (e) => {
+        await fetch('api/users/', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(user)
@@ -45,8 +45,8 @@ function SignUpPage(props){
         .catch((error) => console.error(error))
     }
 
-    const login = (e) => {
-        fetch('auth', {
+    const login = async (e) => {
+        await fetch('auth', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(userAuth)
@@ -58,8 +58,8 @@ function SignUpPage(props){
         .catch((error) => console.error(error))
     }
 
-    const registerAccount = (e) => {
-        fetch('api/create-account', {
+    const registerAccount = async (e) => {
+        await fetch('api/create-account', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,8 +72,8 @@ function SignUpPage(props){
         .catch((error) => console.error(error))
     }
 
-    const createBalance = (e) => {
-        fetch('api/create-balance', {
+    const createBalance = async(e) => {
+        await fetch('api/create-balance', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

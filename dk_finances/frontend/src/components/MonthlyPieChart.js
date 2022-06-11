@@ -21,25 +21,33 @@ function MonthlyPieChart(props){
     const [chartInstance, setChartInstance] = React.useState(null);
   
     //Fetches the history table 
-    React.useEffect(()=>{fetch('api/get-history', {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${props.token}`
-      },
-    })
-    .then(res=>{return res.json()})
-    .then(data =>{
-      //Iterates through the fetched data and checks if the date bought is within the current month
-      data.map(cur =>{
-        const monthNow = new Date(cur.date_bought).getMonth(); 
-        const monthData = new Date().getMonth();
-        if(monthData == monthNow){
-          //Adds the data values within amountBasedCategory based on their subcategory
-          amountBasedOnCategory[cur.subcategory] += cur.price;
-          setChartData(Object.values(amountBasedOnCategory))};
-      })
-    })
+    React.useEffect(()=>{
+      
+       const fetchHistory = async()=>{
+        await fetch('api/get-history', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${props.token}`
+          },
+        })
+        .then(res=>{return res.json()})
+        .then(data =>{
+          //Iterates through the fetched data and checks if the date bought is within the current month
+          data.map(cur =>{
+            const monthNow = new Date(cur.date_bought).getMonth(); 
+            const monthData = new Date().getMonth();
+            if(monthData == monthNow){
+              //Adds the data values within amountBasedCategory based on their subcategory
+              amountBasedOnCategory[cur.subcategory] += cur.price;
+              setChartData(Object.values(amountBasedOnCategory))};
+          })
+        })
+      }
+
+      fetchHistory();
+
+
     }, []);
 
 

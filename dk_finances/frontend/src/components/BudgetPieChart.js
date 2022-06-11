@@ -23,32 +23,39 @@ function BudgetPieChart(props){
     // }, [])
 
     //Fetch the history table  
-    React.useEffect(()=>{fetch('api/get-history', {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${props.token}`
-      },
-    })
-    .then(res=>{return res.json()})
-    .then(data =>{
-      data.map(cur =>{
-        //Get the current month and the date of the current data
-        const monthNow = new Date(cur.date_bought).getMonth(); 
-        const monthData = new Date().getMonth();
-        if(monthData == monthNow){
-          //Adds the data price into needsWants
-          if(cur.category == 'Needs'){
-            needsWants['needs'] += cur.price;
-          }else{
-            needsWants['wants'] += cur.price;
-          }
-          //Set the chart data based on the needsWants values
-          setChartData(Object.values(needsWants));
+    React.useEffect(()=>{
+      
+      const fetchHistory = async()=>{
+        await fetch('api/get-history', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${props.token}`
+          },
+        })
+        .then(res=>{return res.json()})
+        .then(data =>{
+          data.map(cur =>{
+            //Get the current month and the date of the current data
+            const monthNow = new Date(cur.date_bought).getMonth(); 
+            const monthData = new Date().getMonth();
+            if(monthData == monthNow){
+              //Adds the data price into needsWants
+              if(cur.category == 'Needs'){
+                needsWants['needs'] += cur.price;
+              }else{
+                needsWants['wants'] += cur.price;
+              }
+              //Set the chart data based on the needsWants values
+              setChartData(Object.values(needsWants));
+    
+            }
+          });
+        })
+      }
 
-        }
-      });
-    })
+      fetchHistory();
+
     }, []);
 
     //Chart configs
@@ -59,7 +66,7 @@ function BudgetPieChart(props){
           labels: ['Needs', 'Wants'],
           datasets: [
             {
-              data: [12, 16],
+              data: [0, 0],
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(54, 162, 235, 0.2)",

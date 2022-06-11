@@ -36,10 +36,10 @@ function LoginPage(props){
         userList.push(item.username);
     })
 
-    const handleLogin = (e) => {
+    const handleLogin = async(e) => {
         e.preventDefault();
         const user = { username, password };
-        fetch('auth', {
+        await fetch('auth', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(user)

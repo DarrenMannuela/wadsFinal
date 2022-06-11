@@ -68,22 +68,27 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   const page = {'/': 'Dashboard', '/smartsplit': 'Smart Split', '/tracker': 'Tracker' , '/addincome': 'Add Income'}
 
   //Fetches from the budegt allocation table
-  React.useEffect(()=>{fetch(`api/get-budget-allocation`, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${props.token}`
-    },
-  })
-  .then(res=>{return res.json()})
-  .then(data =>{
-    var sepSavings = data.savings.toLocaleString();
-    var sepNeeds = data.needs.toLocaleString();
-    var sepWants = data.wants.toLocaleString();
-    setSavings(sepSavings);
-    setNeeds(sepNeeds);
-    setWants(sepWants);
-  })
+  React.useEffect(()=>{
+    const fetchBudget = async()=>{
+      await fetch('api/get-budget-allocation', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${props.token}`
+        },
+      })
+      .then(res=>{return res.json()})
+      .then(data =>{
+        var sepSavings = data.savings.toLocaleString();
+        var sepNeeds = data.needs.toLocaleString();
+        var sepWants = data.wants.toLocaleString();
+        setSavings(sepSavings);
+        setNeeds(sepNeeds);
+        setWants(sepWants);
+      })
+    }
+
+    fetchBudget();
   }, []);
 
   //Handles the opening of the Drawer

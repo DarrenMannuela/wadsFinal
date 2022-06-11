@@ -90,7 +90,8 @@ function AddCategorySmartSplit(props){
 
 
     //Giving a POST request to add to the history database
-    function postAmount(){
+    async function postAmount(){
+        
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); 
@@ -98,7 +99,7 @@ function AddCategorySmartSplit(props){
 
         today = yyyy + '-' + mm + '-' + dd;
 
-        fetch(`api/create-history`,{
+        await fetch('api/create-history',{
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -48,15 +48,21 @@ function DailyList(props){
   const [rows, setRows] = React.useState([]);
   
   //Fetch from history table
-  React.useEffect(()=>{fetch('api/get-history', {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Token ${props.token}`
-    },
-  })
-  .then(res=>{return res.json()})
-  .then(data =>{setRows(data)})
+  React.useEffect(()=>{
+    
+    const fetchHistory = async()=>{
+      await fetch('api/get-history', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${props.token}`
+        },
+      })
+      .then(res=>{return res.json()})
+      .then(data =>{setRows(data)})
+    }
+
+    fetchHistory();
   }, []);
 
   //Going through all values received and creating their corresponding data within the table
