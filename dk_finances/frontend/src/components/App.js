@@ -1,17 +1,18 @@
 import React, { useState } from "react";
-import {render} from "react-dom";
+import { createRoot } from 'react-dom/client';
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import SignUpPage from "../pages/SignUpPage";
 import SmartSplitPage from "../pages/SmartSplitPage";
 import TrackerPage from "../pages/TrackerPage";
 import AddIncomePage from "../pages/AddIncomePage";
-import {BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
 function App(props) {
         const [token, setToken] = useState("");
         const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
         const userLogin = (e) => {
                 setToken(e);
@@ -19,6 +20,7 @@ function App(props) {
             }
 
         const userLogout = () => {
+                localStorage.clear();
                 setToken("");
                 setIsLoggedIn(false);
         }
@@ -26,12 +28,52 @@ function App(props) {
         return(    
                 <Router>
                         <Routes>
-                                <Route path='/' element={<HomePage isLoggedIn={isLoggedIn} token={token}/>}></Route>
-                                <Route path='/login' element={<LoginPage userLogin={userLogin} />}></Route>
-                                <Route path='/signup' element={<SignUpPage userLogin={userLogin} token={token}/>}></Route>
-                                <Route path='/smartsplit' element={<SmartSplitPage isLoggedIn={isLoggedIn} token={token}/>}></Route>
-                                <Route path='/tracker' element={<TrackerPage isLoggedIn={isLoggedIn} token={token}/>}></Route>
-                                <Route path='/addincome' element={<AddIncomePage isLoggedIn={isLoggedIn} token={token}/>}></Route>
+                                <Route path='/' element=
+                                        {<HomePage 
+                                        userLogin={userLogin}
+                                        userLogout={userLogout} 
+                                        isLoggedIn={isLoggedIn} 
+                                        token={token}
+                                        />}
+                                >
+                                </Route>
+                                <Route path='/login' element=
+                                        {<LoginPage 
+                                        userLogin={userLogin} 
+                                        />}
+                                >
+                                </Route>
+                                <Route path='/signup' element=
+                                        {<SignUpPage 
+                                        userLogin={userLogin} 
+                                        token={token}
+                                        />}
+                                >    
+                                </Route>
+                                <Route path='/smartsplit' element=
+                                        {<SmartSplitPage
+                                        userLogin={userLogin}
+                                        userLogout={userLogout} 
+                                        isLoggedIn={isLoggedIn} 
+                                        token={token}/>}
+                                >
+                                </Route>
+                                <Route path='/tracker' element=
+                                        {<TrackerPage
+                                        userLogin={userLogin}
+                                        userLogout={userLogout} 
+                                        isLoggedIn={isLoggedIn} 
+                                        token={token}/>}
+                                        >                                        
+                                </Route>
+                                <Route path='/addincome' element=
+                                        {<AddIncomePage
+                                        userLogin={userLogin}
+                                        userLogout={userLogout} 
+                                        isLoggedIn={isLoggedIn} 
+                                        token={token}/>}
+                                        >                                        
+                                </Route>
                         </Routes>
                         
                 </Router>
@@ -39,6 +81,7 @@ function App(props) {
 }
 
 const appDiv = document.getElementById('app');
-render(<App/>, appDiv);
+const root = createRoot(appDiv);
+root.render(<App/>);
 
 export default App;

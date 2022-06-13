@@ -18,9 +18,9 @@ function FormBalanceCreation(props){
         props.prevStep();
     };
 
-    const handleFormSubmission = (e) => {
+    const handleFormSubmission = async(e) => {
         e.preventDefault();
-        props.registerUser();
+        await props.registerUser();
         setTimeout(() => {
             props.login();
             props.nextStep();

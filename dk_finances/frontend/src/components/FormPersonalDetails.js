@@ -3,6 +3,7 @@ import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -11,8 +12,13 @@ import Alert from '@mui/material/Alert';
 import { Container } from '@mui/system';
 import { CssBaseline } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import moment from "moment";
+
+const Input = styled('input')({
+    display: 'none',
+  });
 
 
 function FormPersonalDetails(props){
@@ -20,6 +26,14 @@ function FormPersonalDetails(props){
     const [value, setValue] = useState(new Date(""));
     const [accountQuery, setAccountQuery] = useState([]);
     const [nikExist, setNikExist] = useState(false);
+
+    useEffect( () => {
+        if (props.dob == ""){
+            setValue(new Date(""));
+        } else {
+            setValue(new Date(props.dob));
+        }
+    }, [props.dob])
 
     useEffect(() => {
         fetch('api/account')
@@ -82,7 +96,7 @@ function FormPersonalDetails(props){
     return(
         <Container component='main' maxWidth='xs' sx={{mt: '1%', display: "flex"}}>
             <CssBaseline>
-                <Paper elevation={12} sx={{width: 500, height: 700, pt: 7}}>
+                <Paper elevation={12} sx={{width: 500, height: 800, pt: 7}}>
                 <Typography variant="h1" align="center" sx={{ fontSize:24, fontWeight: 600, mx: 5 }}>
                     Let us get to know you more!
                 </Typography>
@@ -90,6 +104,7 @@ function FormPersonalDetails(props){
                     Please input some personal details about yourself, or use Nodeflux to scan your KTP.
                 </Typography>
                 {nikExist && <Alert severity='error' sx={{ mt: 2, mx: 10 }}>The provided NIK already exists</Alert>}
+                {props.invalidFileType && <Alert severity='error' sx={{ mt: 2, mx: 10 }}>Please only upload JPEG images.</Alert>}
                 <Box component='form' sx={{ mt:3 }} onSubmit={handleFormSubmission}>
                     <Grid>
                         <Grid item xs={12} sm={6} sx={{pb: 2, px:12}}>
@@ -137,6 +152,7 @@ function FormPersonalDetails(props){
                                 <DatePicker
                                 name="dob"
                                 inputFormat="yyyy-MM-dd"
+                                mask="____-__-__"
                                 disableFuture
                                 label="Date of birth"
                                 value={value}
@@ -147,21 +163,39 @@ function FormPersonalDetails(props){
                         </Grid>
                     </Grid>
                     <Grid sx={{ px: 15}}>
-                        <ThemeProvider theme={theme}>
-                            <Button
-                                fullWidth
-                                color="nodeflux"
-                                variant="contained"
-                                sx={{ mt: 2}}
-                                >
-                                Nodeflux Placeholder
+                        {!props.nodefluxLoad && <label htmlFor="nodeflux-button">
+                            <Input accept="image/jpeg" id="nodeflux-button" multiple type="file" onChange={props.handleNodefluxKtpOcr} />
+                            <ThemeProvider theme={theme}>
+                                <Button
+                                    fullWidth
+                                    color="nodeflux"
+                                    variant="contained"
+                                    component="span"
+                                    sx={{ mt: 2}}
+                                    >
+                                    Nodeflux
+                                </Button>
+                            </ThemeProvider>
+                        </label>}
+                        {props.nodefluxLoad && <LoadingButton 
+                            loading variant="outlined"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                            >
+                            Nodeflux
+                        </LoadingButton>}
+                        {/* <label htmlFor="contained-button-file">
+                            <Input accept="image/*" id="contained-button-file" multiple type="file" />
+                            <Button variant="contained" component="span">
+                            Upload
                             </Button>
-                        </ThemeProvider>
+                        </label> */}
                     </Grid>
                     <Grid sx={{ px: 15}}>
                         <Button
                             type="submit"
                             fullWidth
+                            disabled={props.nodefluxLoad}
                             variant="contained"
                             sx={{ mt: 5}}
                             >
@@ -172,6 +206,7 @@ function FormPersonalDetails(props){
                         <ThemeProvider theme={theme}>
                             <Button
                                 fullWidth
+                                disabled={props.nodefluxLoad}
                                 color="neutral"
                                 variant="contained"
                                 sx={{ mt: 2}}

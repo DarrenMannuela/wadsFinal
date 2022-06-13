@@ -19,7 +19,7 @@ function FormCredentials(props){
     const [usernameValidLength, setUsernameValidLength] = useState(true);
     const [userExist, setUserExist] = useState(false);
     const [passwordValidLength, setPasswordValidLength] = useState(true);
-    const [rePassword, setRePassword] = useState(null);
+    const [rePassword, setRePassword] = useState("");
     const [passwordMatch, setPasswordMatch] = useState(true);
 
     useEffect(() => {

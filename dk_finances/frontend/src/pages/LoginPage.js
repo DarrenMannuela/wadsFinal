@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 import { Container } from '@mui/system';
 import { CssBaseline } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -17,7 +18,16 @@ function LoginPage(props){
     const [usernameQuery, setUsernameQuery] = useState([]);
     const [username, setUsername] = useState(null);
     const [password, setPassword] = useState(null);
+    const [rightCredential, setRightCredential] = useState(true);
     const navigate = useNavigate();
+
+    useEffect( () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          props.userLogin(token);
+          navigate('/');
+        }
+      }, []);
 
     useEffect(() => {
         fetch('api/users')
@@ -46,21 +56,27 @@ function LoginPage(props){
         })
         .then((data) => data.json())
         .then((data) => {
-            props.userLogin(data.token);
-            navigate('/');
+            // console.log(data);
+            if (data.token) {
+                localStorage.setItem('token', data.token)
+                setRightCredential(true);
+                props.userLogin(data.token);
+                navigate('/');
+            } else {
+                setRightCredential(false);
             }
-        )
+        })
         .catch((error) => console.error(error))
     }
 
     return(
         <Container component='main' maxWidth='xs' sx={{mt: '1%', display: "flex"}}>
-            {props.isLoggedIn && <Navigate to="/" />}
             <CssBaseline>
             <Paper elevation={12} sx={{width: 500, height: 700, pt: 7}}>
             <Typography variant="h1" align="center" sx={{ fontSize:24, fontWeight: 600 }}>
                     Login
-                </Typography>
+            </Typography>
+            {!rightCredential && <Alert severity='error' sx={{ mt: 4, mx: 10 }}>Incorrect credentials!</Alert>}
                 <Box component='form' noValidate sx={{ mt:8 }} onSubmit={handleLogin}>
                     <Grid>
                         <Grid item xs={12} sm={6} sx={{pb: 5, px: 12}}>

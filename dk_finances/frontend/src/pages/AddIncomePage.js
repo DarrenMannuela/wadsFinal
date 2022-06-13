@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import TextField from '@mui/material/TextField'; 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -6,10 +6,20 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import OpenDrawer from '../components/Drawers';
 import BalanceTable from '../components/BalanceTable';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 function AddIncomePage(props){
     const [income, setIncome] = React.useState(0);
+    const navigate = useNavigate();
+
+    useEffect( () => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            props.userLogin(token);
+        } else {
+            navigate('/login');
+        }
+      }, []);
 
     function handleIncome(event){
         setIncome(event.target.valueAsNumber);
@@ -43,12 +53,16 @@ function AddIncomePage(props){
         .catch((err) => console.log('error: ', err))
     }
 
+    const logout = () => {
+        props.userLogout();
+        navigate('/login');
+    }
+
     return(
         <body style={{display:'flex'}}>
-             {!props.isLoggedIn && <Navigate to="/login" />}
             <Box component='form'  columnSpacing={3} sx={{display:'flex', mt:"10%", ml:"20%"}}>
                 <Grid>
-                    <OpenDrawer token={props.token}/>
+                    <OpenDrawer token={props.token} logout={logout}/>
                 </Grid>
                 <Grid container direction="row" sx={{mt:'5%', ml:'10%'}}>
                     <Grid item xs={12}>
